@@ -1,5 +1,5 @@
 AioWeRoBot
-=======
+===========
 
 
 AioWeRoBot 是一个异步微信公众号开发框架。
@@ -9,7 +9,6 @@ AioWeRoBot 是一个异步微信公众号开发框架。
 
     start
     encryption
-    deploy
     handlers
     session
     client
@@ -17,8 +16,5 @@ AioWeRoBot 是一个异步微信公众号开发框架。
     events
     replies
     config
-    contrib
     error-page
     utils
-    contribution-guide
-    api
