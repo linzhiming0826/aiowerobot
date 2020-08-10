@@ -25,8 +25,6 @@ author = 'TuoX'
 # The full version, including alpha/beta/rc tags
 release = '0.0.3'
 
-master_doc = "contents"
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
