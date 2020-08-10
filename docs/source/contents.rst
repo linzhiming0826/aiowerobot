@@ -2,7 +2,7 @@ AioWeRoBot
 =======
 
 
-AioWeRoBot 是一个微信公众号开发框架。
+AioWeRoBot 是一个异步微信公众号开发框架。
 
 .. toctree::
     :maxdepth: 2
