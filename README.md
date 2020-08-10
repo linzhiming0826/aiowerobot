@@ -2,11 +2,11 @@
 
 ## 介绍
 
-代码从[WeRoBot](https://github.com/offu/WeRoBot)fork，修改成基于sanic的异步框架
+代码fork自[WeRoBot](https://github.com/offu/WeRoBot)，修改成基于sanic的异步框架
 
 ## 文档
 
-暂缺
+[点我](https://aiowerobot.readthedocs.io/)
 
 ## Installation
 ```linux
