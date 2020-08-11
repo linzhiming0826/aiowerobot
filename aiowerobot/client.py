@@ -115,10 +115,9 @@ class Client(object):
         :return: 返回token
         """
         if self._token:
-            return self._token
-            # now = time.time()
-            # if self.token_expires_at - now > 60:
-            #     return self._token
+            now = time.time()
+            if self.token_expires_at - now > 60:
+                return self._token
         json = await self.grant_token()
         self._token = json["access_token"]
         self.token_expires_at = int(time.time()) + json["expires_in"]
