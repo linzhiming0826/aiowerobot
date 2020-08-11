@@ -121,7 +121,7 @@ url           点击图片后跳转链接
     robot = werobot.AioWeRoBot(token='tokenhere')
 
     @robot.text
-    def articles(message):
+    async def articles(message):
         return [
             [
                 "title",
@@ -165,7 +165,7 @@ hq_url            高质量音乐链接，WIFI环境优先使用该链接播放�
     robot = werobot.AioWeRoBot(token='tokenhere')
 
     @robot.text
-    def music(message):
+    async def music(message):
         return [
             "title",
             "description",
@@ -174,7 +174,7 @@ hq_url            高质量音乐链接，WIFI环境优先使用该链接播放�
             ]
 
     @robot.text
-    def music2(message):
+    async def music2(message):
         return [
             "微信你不懂爱",
             "龚琳娜最新力作",

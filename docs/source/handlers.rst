@@ -14,11 +14,11 @@ WeRoBot会将合法的请求发送给 handlers 依次执行。
 
     # 通过修饰符添加handler
     @robot.handler
-    def echo(message):
+    async def echo(message):
         return 'Hello World!'
 
     # 通过`add_handler`添加handler
-    def echo(message):
+    async def echo(message):
         return 'Hello World!'
     robot.add_handler(echo)
 
@@ -34,7 +34,7 @@ WeRoBot会将合法的请求发送给 handlers 依次执行。
     robot = aiowerobot.AioWeRoBot(token='tokenhere')
 
     @robot.subscribe
-    def subscribe(message):
+    async def subscribe(message):
         return 'Hello My Friend!'
 
     robot.run()
@@ -46,7 +46,7 @@ WeRoBot会将合法的请求发送给 handlers 依次执行。
     robot = aiowerobot.AioWeRoBot(token='tokenhere')
 
     @robot.text
-    def echo(message):
+    async def echo(message):
         return message.content
 
     robot.run()
@@ -103,7 +103,7 @@ WeRoBot会将合法的请求发送给 handlers 依次执行。
 
     @robot.text
     @robot.location
-    def handler(message):
+    async def handler(message):
         # Do what you love to do
         pass
 
@@ -115,7 +115,7 @@ WeRoBot会将合法的请求发送给 handlers 依次执行。
 
     robot = aiowerobot.AioWeRoBot(token='tokenhere')
 
-    def handler(message):
+    async def handler(message):
         # Do what you love to do
         pass
 
@@ -134,13 +134,13 @@ robot.key_click —— 回应自定义菜单
 如果你在自定义菜单中定义了一个 Key 为 ``abort`` 的菜单，响应这个菜单的 handler 可以写成这样 ::
 
     @robot.key_click("abort")
-    def abort():
+    async def abort():
         return "I'm a robot"
 
 当然，如果你不喜欢用 :meth:`~aiowerobot.robot.BaseRoBot.key_click` ，也可以写成这样 ::
 
     @robot.click
-    def abort(message):
+    async def abort(message):
         if message.key == "abort":
             return "I'm a robot"
 
@@ -154,22 +154,22 @@ robot.filter ——  回应有指定文本的消息
 现在你可以写这样的代码 ::
 
     @robot.filter("a")
-    def a():
+    async def a():
         return "正文为 a "
 
     import re
 
 
     @robot.filter(re.compile(".*?bb.*?"))
-    def b():
+    async def b():
         return "正文中含有 bb "
 
     @robot.filter(re.compile(".*?c.*?"), "d")
-    def c():
+    async def c():
         return "正文中含有 c 或正文为 d"
 
     @robot.filter(re.compile("(.*)?e(.*)?"), "f")
-    def d(message, session, match):
+    async def d(message, session, match):
         if match:
             return "正文为 " + match.group(1) + "e" + match.group(2)
         return "正文为 f"
@@ -177,14 +177,14 @@ robot.filter ——  回应有指定文本的消息
 这段代码等价于 ::
 
     @robot.text
-    def a(message):
+    async def a(message):
         if message.content == "a":
             return "正文为 a "
     import re
 
 
     @robot.text
-    def b(message):
+    async def b(message):
         if re.compile(".*?bb.*?").match(message.content):
             return "正文中含有 b "
 
@@ -194,7 +194,7 @@ robot.filter ——  回应有指定文本的消息
             return "正文中含有 c 或正文为 d"
 
     @robot.text
-    def d(message):
+    async def d(message):
         match = re.compile("(.*)?e(.*)?").match(message.content)
         if match:
             return "正文为 " + match.group(1) + "e" + match.group(2)
@@ -203,7 +203,7 @@ robot.filter ——  回应有指定文本的消息
 
 如果你想通过修饰符以外的方法添加 filter，可以使用 :func:`~aiowerobot.robot.BaseRoBot.add_filter` 方法 ::
 
-    def say_hello():
+    async def say_hello():
         return "hello!"
 
     robot.add_filter(func=say_hello, rules=["hello", "hi", re.compile(".*?hello.*?")])

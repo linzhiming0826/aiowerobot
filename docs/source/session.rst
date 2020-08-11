@@ -9,7 +9,7 @@ Session
     robot = AioWeRoBot(token=aiowerobot.utils.generate_token())
 
     @robot.text
-    def first(message, session):
+    async def first(message, session):
         if 'last' in session:
             return
         session['last'] = message.content
@@ -40,17 +40,17 @@ Session 在 AioWeRoBot 中默认开启， 并使用 :class:`aiowerobot.session.s
 没有打开 Session 的时候，一个标准的 AioWeRoBot Handler 应该是这样的 ::
 
     @robot.text
-    def hello(message):
+    async def hello(message):
         return "Hello!"
 
 而在打开 Session 之后， 如果你的 handler 不需要使用 Session ，可以保持不变； 如果需要使用 Session ，则这个 Handler 需要修改为接受第二个参数： ``session`` ::
 
     @robot.subscribe_event
-    def intro(message):
+    async def intro(message):
         return "Hello!"
 
     @robot.text
-    def hello(message, session):
+    async def hello(message, session):
         count = session.get("count", 0) + 1
         session["count"] = count
         return "Hello! You have sent %s messages to me" % count

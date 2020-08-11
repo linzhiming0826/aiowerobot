@@ -11,7 +11,7 @@ Hello World
     robot = aiowerobot.AioWeRoBot(token='tokenhere')
 
     @robot.handler
-    def hello(message):
+    async def hello(message):
         return 'Hello World!'
 
     # 让服务器监听在 0.0.0.0:80
@@ -28,7 +28,7 @@ AioWeRoBot 会解析微信服务器发来的消息， 并将消息转换成成 :
 在刚才的 Hello World 中， 我们编写的 ::
 
     @robot.handler
-    def hello(message):
+    async def hello(message):
         return 'Hello World!'
 
 就是一个简单的 :ref:`Handler` ， `@robot.handler` 意味着 `robot` 会将所有接收到的消息（ 包括 :ref:`Message` 和 :ref:`Event` ） 都转交给这个 :ref:`Handler` 来处理。
@@ -36,12 +36,12 @@ AioWeRoBot 会解析微信服务器发来的消息， 并将消息转换成成 :
 
     # @robot.text 修饰的 Handler 只处理文本消息
     @robot.text
-    def echo(message):
+    async def echo(message):
         return message.content
 
     # @robot.image 修饰的 Handler 只处理图片消息
     @robot.image
-    def img(message):
+    async def img(message):
         return message.img
 
 使用 Session 记录用户状态
@@ -51,7 +51,7 @@ AioWeRoBot 提供了 :ref:`Session` 功能， 可以让你方便的记录用户�
 比如， 这个 Handler 可以判断发消息的用户之前有没有发送过消息 ::
 
     @robot.text
-    def first(message, session):
+    async def first(message, session):
         if 'first' in session:
             return '你之前给我发过消息'
         session['first'] = True
@@ -74,7 +74,7 @@ Session 功能默认开启， 并使用 SQLite 存储 Session 数据。 详情�
 
 然后， 我们就可以创建自定义菜单了 ::
 
-    client.create_menu({
+    await client.create_menu({
         "button":[{	
              "type": "click",
              "name": "今日歌曲",
@@ -85,6 +85,6 @@ Session 功能默认开启， 并使用 SQLite 存储 Session 数据。 详情�
 注意以上代码只需要运行一次就可以了。在创建完自定义菜单之后， 我们还需要写一个 :ref:`handler` 来响应菜单的点击操作 ::
 
     @robot.key_click("music")
-    def music(message):
+    async def music(message):
         return '你点击了“今日歌曲”按钮'
 
