@@ -78,7 +78,10 @@ class Client(object):
             body = body.encode('utf8')
             kwargs["data"] = body
         if "files" in kwargs:
-            kwargs['data'] = kwargs['files']
+            data = aiohttp.FormData()
+            for k, v in kwargs['files'].items():
+                data.add_field(k, **v)
+            kwargs['data'] = data
             del kwargs['files']
         async with aiohttp.request(method=method, url=url, raise_for_status=True, **kwargs) as r:
             content = json.loads(await r.text(encoding='utf-8'))
