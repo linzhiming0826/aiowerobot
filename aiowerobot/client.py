@@ -995,7 +995,7 @@ class Client(object):
                                    params={"ticket": ticket}) as r:
             return await r.read()
 
-    async def send_template_message(self, user_id, template_id, data, url=''):
+    async def send_template_message(self, user_id, template_id, data, url='', miniprogram=None):
         """
         发送模板消息
         详情请参考 http://mp.weixin.qq.com/wiki/17/304c1885ea66dbedf7dc170d84999a9d.html
@@ -1004,16 +1004,20 @@ class Client(object):
         :param template_id: 模板 ID。
         :param data: 用于渲染模板的数据。
         :param url: 模板消息的可选链接。
+        :param miniprogram: 跳小程序所需数据的可选数据。
         :return: 返回的 JSON 数据包
         """
+        payload = {
+            "touser": user_id,
+            "template_id": template_id,
+            "url": url,
+            "data": data
+        }
+        if miniprogram:
+            payload["miniprogram"] = miniprogram
         return await self.post(
             url="https://api.weixin.qq.com/cgi-bin/message/template/send",
-            data={
-                "touser": user_id,
-                "template_id": template_id,
-                "url": url,
-                "data": data
-            }
+            data=payload
         )
 
     async def create_tag(self, tag_name):
