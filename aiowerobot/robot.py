@@ -657,7 +657,7 @@ class AioWeRoBot(BaseRoBot):
         if port is None:
             port = self.config["PORT"]
         try:
-            app = Sanic()
+            app = Sanic(__name__)
 
             @app.route('/', methods=['GET', 'POST'])
             async def handler(request):
