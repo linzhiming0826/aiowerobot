@@ -6,10 +6,9 @@ from setuptools import setup, find_packages
 
 
 requirements = [
-    'sanic>=18.2',
+    'sanic>=22.9.1',
     'xmltodict>=0.12.0',
-    'aiohttp>=3.6.2',
-    'ujson>=1.35'
+    'aiohttp>=3.6.2'
 ]
 
 with open("README.md", "r") as fh:

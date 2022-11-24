@@ -1,11 +1,13 @@
-import warnings
 import html
+import warnings
+from functools import partial
 from sanic import response, Sanic
-from aiowerobot.config import Config, ConfigAttribute
 from aiowerobot.client import Client
+from sanic.worker.loader import AppLoader
 from aiowerobot.exceptions import ConfigError
-from aiowerobot.parser import parse_xml, process_message
+from aiowerobot.config import Config, ConfigAttribute
 from aiowerobot.replies import process_function_reply
+from aiowerobot.parser import parse_xml, process_message
 from aiowerobot.utils import (
     to_binary, to_text, check_signature, make_error_page, cached_property,
     is_regex
@@ -645,7 +647,36 @@ class BaseRoBot(object):
 
 class AioWeRoBot(BaseRoBot):
 
-    def run(self, host=None, port=None, enable_pretty_logging=True, **kwargs):
+    def attach_endpoints(self, app):
+        @app.route('/', methods=['GET', 'POST'])
+        async def handler(request):
+            timestamp = request.args.get('timestamp', '')
+            nonce = request.args.get('nonce', '')
+            signature = request.args.get('signature', '')
+            if not self.check_signature(
+                timestamp,
+                nonce,
+                signature,
+            ):
+                return response.html(self.make_error_page(html.escape(request.url)))
+            if request.method == 'GET':
+                return response.text(request.args['echostr'][0])
+            message = self.parse_message(
+                request.body,
+                timestamp=timestamp,
+                nonce=nonce,
+                msg_signature=request.args.get('msg_signature', '')
+            )
+            res = response.html(await self.get_encrypted_reply(message))
+            res.headers['content_type'] = 'application/xml'
+            return res
+
+    def create_app(self, app_name):
+        app = Sanic(app_name)
+        self.attach_endpoints(app)
+        return app
+
+    def run(self, name='myaiowerobot', host=None, port=None, enable_pretty_logging=True, **kwargs):
         """
         运行 AioWeRoBot
         """
@@ -657,31 +688,9 @@ class AioWeRoBot(BaseRoBot):
         if port is None:
             port = self.config["PORT"]
         try:
-            app = Sanic(__name__)
-
-            @app.route('/', methods=['GET', 'POST'])
-            async def handler(request):
-                timestamp = request.args.get('timestamp', '')
-                nonce = request.args.get('nonce', '')
-                signature = request.args.get('signature', '')
-                if not self.check_signature(
-                    timestamp,
-                    nonce,
-                    signature,
-                ):
-                    return response.html(self.make_error_page(html.escape(request.url)))
-                if request.method == 'GET':
-                    return response.text(request.args['echostr'][0])
-                message = self.parse_message(
-                    request.body,
-                    timestamp=timestamp,
-                    nonce=nonce,
-                    msg_signature=request.args.get('msg_signature', '')
-                )
-                res = response.html(await self.get_encrypted_reply(message))
-                res.headers['content_type'] = 'application/xml'
-                return res
-
-            app.run(host=host, port=port, **kwargs)
+            loader = AppLoader(factory=partial(self.create_app, name))
+            app = loader.load()
+            app.prepare(host=host, port=port, **kwargs)
+            Sanic.serve(primary=app, app_loader=loader)
         except KeyboardInterrupt:
             exit(0)
